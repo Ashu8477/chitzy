@@ -2,7 +2,7 @@ import Navbar from "./components/Navbar";
 import {Routes,Route, Navigate} from "react-router-dom";
 import HOMEPAGE from "./pages/HomePage.jsx";
 import SIGNUPPAGE from "./pages/Signuppage.jsx";
-import LOGINPAGE from "./pages/loginpage.jsx";
+import LOGINPAGE from "./pages/Loginpage.jsx";
 import SETTINGPAGE from "./pages/SettingsPage.jsx";
 import PROFILEPAGE from "./pages/ProfilePage.jsx";
 import {useAuthStore} from "./store/useAuthStore.js"
