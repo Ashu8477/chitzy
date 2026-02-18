@@ -63,6 +63,8 @@ export const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState().socket;
 
     socket.on('newMessage', (newMessage) => {
+      console.log('LIVE MESSAGE RECEIVED:', newMessage);
+
       const senderId =
         typeof newMessage.senderId === 'object'
           ? newMessage.senderId._id

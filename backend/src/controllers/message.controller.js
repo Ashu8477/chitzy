@@ -60,6 +60,8 @@ export const sendMessage = async (req, res) => {
       .populate('receiverId', 'fullName profilePic');
 
     const receiverSocketId = getReceiverSocketId(receiverId);
+    console.log('Receiver socket:', receiverSocketId);
+
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('newMessage', populatedMessage);
     }

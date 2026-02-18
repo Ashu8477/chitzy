@@ -7,7 +7,12 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:5173', 'https://chitzy-chat-app.netlify.app'],
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'https://chitzy-chat-app.netlify.app',
+    ],
+    credentials: true,
   },
 });
 
@@ -21,7 +26,9 @@ io.on('connection', (socket) => {
   console.log('A user connected', socket.id);
 
   const userId = socket.handshake.query.userId;
+  console.log('User ID from socket:', userId);
   if (userId) userSocketMap[userId] = socket.id;
+  console.log('Current users:', userSocketMap);
 
   io.emit('getOnlineUsers', Object.keys(userSocketMap));
 
@@ -36,7 +43,13 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('A user disconnected', socket.id);
-    delete userSocketMap[userId];
+
+    for (const key in userSocketMap) {
+      if (userSocketMap[key] === socket.id) {
+        delete userSocketMap[key];
+      }
+    }
+
     io.emit('getOnlineUsers', Object.keys(userSocketMap));
   });
 });
