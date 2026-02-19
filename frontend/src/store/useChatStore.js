@@ -62,9 +62,13 @@ export const useChatStore = create((set, get) => ({
 
     const socket = useAuthStore.getState().socket;
 
-    socket.on('newMessage', (newMessage) => {
-      console.log('LIVE MESSAGE RECEIVED:', newMessage);
+    console.log('🟢 Subscribing to newMessage');
 
+    // 🔥 FIRST REMOVE OLD LISTENER
+    socket.off('newMessage');
+
+    socket.on('newMessage', (newMessage) => {
+      console.log('🔵 newMessage event fired:', newMessage._id);
       const senderId =
         typeof newMessage.senderId === 'object'
           ? newMessage.senderId._id
@@ -75,8 +79,14 @@ export const useChatStore = create((set, get) => ({
 
       if (!isMessageSentFromSelectedUser) return;
 
-      set({
-        messages: [...get().messages, newMessage],
+      set((state) => {
+        const exists = state.messages.find((msg) => msg._id === newMessage._id);
+
+        if (exists) return state;
+
+        return {
+          messages: [...state.messages, newMessage],
+        };
       });
     });
   },

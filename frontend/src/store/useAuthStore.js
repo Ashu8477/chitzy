@@ -81,27 +81,37 @@ export const useAuthStore = create((set, get) => ({
     }
   },
   connectSocket: () => {
-    const { authUser } = get();
-    if (!authUser || get().socket?.connected) return;
+    const { authUser, socket } = get();
 
-    const socket = io(SOCKET_URL, {
+    if (!authUser) return;
+
+    // 🔥 If socket already exists AND is connected → DO NOTHING
+    if (socket && socket.connected) {
+      console.log('⚠️ Socket already connected:', socket.id);
+      return;
+    }
+
+    // 🔥 If socket exists but not connected → disconnect first
+    if (socket) {
+      socket.disconnect();
+    }
+
+    const newSocket = io(SOCKET_URL, {
       query: {
         userId: authUser._id,
       },
       withCredentials: true,
     });
 
-    socket.on('connect', () => {
-      console.log('Socket connected:', socket.id);
+    newSocket.on('connect', () => {
+      console.log('✅ Socket connected:', newSocket.id);
     });
 
-    socket.connect();
-
-    set({ socket });
-
-    socket.on('getOnlineUsers', (userIds) => {
+    newSocket.on('getOnlineUsers', (userIds) => {
       set({ onlineUsers: userIds });
     });
+
+    set({ socket: newSocket });
   },
 
   disconnectSocket: () => {

@@ -35,14 +35,18 @@ io.on('connection', (socket) => {
   // ✅ LIVE MESSAGE LISTENER ADD
   socket.on('sendMessage', (data) => {
     const receiverSocketId = getReceiverSocketId(data.receiverId);
+    console.log('📩 sendMessage event received from:', socket.id);
+    console.log('📦 Data ID:', data._id);
+    console.log('🎯 Receiver socket:', receiverSocketId);
 
     if (receiverSocketId) {
+      console.log('🚀 Emitting newMessage to receiver:', receiverSocketId);
       io.to(receiverSocketId).emit('newMessage', data);
     }
   });
 
   socket.on('disconnect', () => {
-    console.log('A user disconnected', socket.id);
+    console.log('🟢 A user connected', socket.id);
 
     for (const key in userSocketMap) {
       if (userSocketMap[key] === socket.id) {
